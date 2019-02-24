@@ -79,5 +79,5 @@ typings/
 # DynamoDB Local files
 .dynamodb/
 
-# env file
-.envrc
+# Firebase admin key
+firebaseAdminKey.json
