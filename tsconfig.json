@@ -1,0 +1,22 @@
+{
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "compilerOptions": {
+    "module": "commonjs",
+    "outDir": "dist",
+    "target": "es2017",
+    "lib": ["es2017"],
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noEmit": true
+  },
+  "include": ["**/*"],
+  "exclude": ["node_modules", "dist"]
+}
