@@ -1,27 +1,40 @@
 'use strict'
 
+const Busboy = require('busboy')
 const express = require('express')
 const errors = require('http-errors')
+const fs = require('fs')
 const logger = require('pino')()
+const { ObjectId } = require('mongodb')
+const os = require('os')
+const path = require('path')
 const wrap = require('./lib/wrap')
 
 const app = express()
 
-// app.use((req, res, next) => {
-//   const busboy = new Busboy({ headers: req.headers })
-//   const tmpdir = os.tmpdir()
+// FIXME: The server is stop if upload a file
+app.use((req, res, next) => {
+  if (req.method === 'POST') {
+    const busboy = new Busboy({ headers: req.headers })
+    const fileName = `${ObjectId().toString()}.txt`
+    const filePath = path.join(os.tmpdir(), fileName)
 
-//   busboy.on('file', (fieldname, file) => {
-//     const id = ObjectId()
-//     const filePath = path.join(tmpdir, id)
-//     file.pipe(fs.createWriteStream(filePath))
-//     file.on('end', () => {})
-//   })
-//   req.pipe(busboy)
-//   next()
-// })
+    busboy.on('file', (fieldname, file) => {
+      file.pipe(fs.createWriteStream(filePath))
+      file.on('end', () => {
+        req.file = { name: fileName, path: filePath }
+      })
+    })
 
-app.get('/upload', wrap(require('./apis/upload').upload))
+    busboy.on('finish', () => {
+      next()
+    })
+
+    req.pipe(busboy)
+  }
+})
+
+app.post('/upload', wrap(require('./apis/upload').upload))
 
 app.use((req, res, next) => {
   next(new errors.NotFound())
