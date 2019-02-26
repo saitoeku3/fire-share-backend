@@ -12,22 +12,17 @@ const wrap = require('./lib/wrap')
 
 const app = express()
 
-// FIXME: The server is stop if upload a file
 app.use((req, res, next) => {
   if (req.method === 'POST') {
     const busboy = new Busboy({ headers: req.headers })
-    const fileName = `${ObjectId().toString()}.txt`
-    const filePath = path.join(os.tmpdir(), fileName)
+    const filepath = path.join(os.tmpdir(), `${ObjectId().toString()}.txt`)
 
     busboy.on('file', (fieldname, file) => {
-      file.pipe(fs.createWriteStream(filePath))
+      file.pipe(fs.createWriteStream(filepath))
       file.on('end', () => {
-        req.file = { name: fileName, path: filePath }
+        req.file = { path: filepath }
+        next()
       })
-    })
-
-    busboy.on('finish', () => {
-      next()
     })
 
     req.pipe(busboy)
