@@ -16,16 +16,16 @@ app.use(logger('dev'))
 app.use((req, res, next) => {
   if (req.method === 'POST') {
     const busboy = new Busboy({ headers: req.headers })
-    const filepath = path.join(os.tmpdir(), `${ObjectId().toString()}.txt`)
 
-    busboy.on('file', (fieldname, file) => {
+    busboy.on('file', (fieldname, file, filename) => {
+      const ext = filename.match(/\.[a-z]+$/)
+      const filepath = path.join(os.tmpdir(), `${ObjectId().toString()}${ext}`)
       file.pipe(fs.createWriteStream(filepath))
       file.on('end', () => {
         req.file = { path: filepath }
         next()
       })
     })
-
     req.pipe(busboy)
   }
 })
