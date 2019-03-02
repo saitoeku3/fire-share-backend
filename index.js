@@ -4,7 +4,7 @@ const Busboy = require('busboy')
 const express = require('express')
 const errors = require('http-errors')
 const fs = require('fs')
-const logger = require('pino')()
+const logger = require('morgan')
 const { ObjectId } = require('mongodb')
 const os = require('os')
 const path = require('path')
@@ -12,6 +12,7 @@ const wrap = require('./lib/wrap')
 
 const app = express()
 
+app.use(logger('dev'))
 app.use((req, res, next) => {
   if (req.method === 'POST') {
     const busboy = new Busboy({ headers: req.headers })
@@ -37,7 +38,6 @@ app.use((req, res, next) => {
 
 app.use((err, req, res) => {
   const code = err.statusCode || 500
-  logger.error(err)
   res.status(code).json({
     code: code,
     error: err.message
