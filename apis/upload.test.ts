@@ -15,7 +15,7 @@ const writeFile = util.promisify(fs.writeFile)
 
 test('upload', async () => {
   const filepath = path.join(os.tmpdir(), `${ObjectId().toString()}.txt`)
-  const filename = filepath.match(/[0-9a-z.?]+\.[a-z]+/)[0]
+  const [filename] = filepath.match(/[0-9a-z.?]+\.[a-z]+/)
   const req = { file: { filepath } }
 
   try {
