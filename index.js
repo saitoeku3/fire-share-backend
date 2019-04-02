@@ -22,11 +22,13 @@ app.use((req, res, next) => {
       const filepath = path.join(os.tmpdir(), `${ObjectId().toString()}${ext}`)
       file.pipe(fs.createWriteStream(filepath))
       file.on('end', () => {
-        req.file = { path: filepath }
+        req.file = { filepath }
         next()
       })
     })
     req.pipe(busboy)
+  } else {
+    next()
   }
 })
 
